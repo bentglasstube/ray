@@ -1,10 +1,11 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_binary(
-    name = "ray",
+    name = "main",
     srcs = ["main.cc"],
     deps = [
         ":color",
+        ":ray",
         ":vec3",
     ],
 )
@@ -18,4 +19,9 @@ cc_library(
     name = "color",
     hdrs = ["color.h"],
     deps = [":vec3"],
+)
+
+cc_library(
+    name = "ray",
+    hdrs = ["ray.h"],
 )
