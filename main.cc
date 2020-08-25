@@ -6,12 +6,12 @@
 
 double  hit_sphere(const point3& center, double radius, const ray& r) {
   const vec3 oc = r.origin() - center;
-  const auto a = dot(r.direction(), r.direction());
-  const auto b = 2.0 * dot(oc, r.direction());
-  const auto c = dot(oc, oc) - radius * radius;
-  const auto disc = b * b - 4 * a * c;
+  const auto a = r.direction().length_squared();
+  const auto half_b = dot(oc, r.direction());
+  const auto c = oc.length_squared() - radius * radius;
+  const auto disc = half_b * half_b - a * c;
 
-  return disc < 0 ? -1.0 : (-b - std::sqrt(disc)) / (2.0 * a);
+  return disc < 0 ? -1.0 : (-half_b - std::sqrt(disc)) / a;
 }
 
 color ray_color(const ray& r) {
