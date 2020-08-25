@@ -4,20 +4,26 @@
 #include "ray.h"
 #include "vec3.h"
 
-bool hit_sphere(const point3& center, double radius, const ray& r) {
+double  hit_sphere(const point3& center, double radius, const ray& r) {
   const vec3 oc = r.origin() - center;
   const auto a = dot(r.direction(), r.direction());
   const auto b = 2.0 * dot(oc, r.direction());
   const auto c = dot(oc, oc) - radius * radius;
-  return b * b - 4 * a * c > 0;
+  const auto disc = b * b - 4 * a * c;
+
+  return disc < 0 ? -1.0 : (-b - std::sqrt(disc)) / (2.0 * a);
 }
 
 color ray_color(const ray& r) {
-  if (hit_sphere(point3(0, 0, -1), 0.5, r))
-    return color(1, 0, 0);
+  const auto ball = point3(0, 0, -1);
+  auto t = hit_sphere(ball, 0.5, r);
+  if (t > 0.0) {
+    vec3 normal = unit_vector(r.at(t) - ball);
+    return 0.5 * color(normal.x() + 1, normal.y() + 1, normal.z() + 1);
+  }
 
   vec3 unit_dir = unit_vector(r.direction());
-  const auto t = 0.5 * (unit_dir.y() + 1.0);
+  t = 0.5 * (unit_dir.y() + 1.0);
   return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 
