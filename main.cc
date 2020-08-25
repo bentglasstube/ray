@@ -1,29 +1,20 @@
 #include <iostream>
 
 #include "color.h"
+#include "hittable_list.h"
 #include "ray.h"
+#include "sphere.h"
+#include "util.h"
 #include "vec3.h"
 
-double  hit_sphere(const point3& center, double radius, const ray& r) {
-  const vec3 oc = r.origin() - center;
-  const auto a = r.direction().length_squared();
-  const auto half_b = dot(oc, r.direction());
-  const auto c = oc.length_squared() - radius * radius;
-  const auto disc = half_b * half_b - a * c;
-
-  return disc < 0 ? -1.0 : (-half_b - std::sqrt(disc)) / a;
-}
-
-color ray_color(const ray& r) {
-  const auto ball = point3(0, 0, -1);
-  auto t = hit_sphere(ball, 0.5, r);
-  if (t > 0.0) {
-    vec3 normal = unit_vector(r.at(t) - ball);
-    return 0.5 * color(normal.x() + 1, normal.y() + 1, normal.z() + 1);
+color ray_color(const ray& r, const hittable& world) {
+  hit_record rec;
+  if (world.hit(r, 0, infinity, rec)) {
+    return 0.5 * (rec.normal + color(1, 1, 1));
   }
 
   vec3 unit_dir = unit_vector(r.direction());
-  t = 0.5 * (unit_dir.y() + 1.0);
+  const double t = 0.5 * (unit_dir.y() + 1.0);
   return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 
@@ -32,6 +23,11 @@ int main() {
   const double aspect_ratio = 16.0 / 9.0;
   const int image_width = 400;
   const int image_height = static_cast<int>(image_width / aspect_ratio);
+
+  // Scene
+  hittable_list world;
+  world.add(std::make_shared<sphere>(point3(0, 0, -1), 0.5));
+  world.add(std::make_shared<sphere>(point3(0, -100.5, -1), 100));
 
   // Camera properties
   const double viewport_height = 2.0;
@@ -54,7 +50,7 @@ int main() {
       const auto v = double(y) / (image_height - 1);
 
       ray r(origin, lower_left + u * horizontal + v * vertical - origin);
-      color c = ray_color(r);
+      color c = ray_color(r, world);
       write_color(std::cout, c);
     }
   }
