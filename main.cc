@@ -4,7 +4,18 @@
 #include "ray.h"
 #include "vec3.h"
 
-color background(const ray& r) {
+bool hit_sphere(const point3& center, double radius, const ray& r) {
+  const vec3 oc = r.origin() - center;
+  const auto a = dot(r.direction(), r.direction());
+  const auto b = 2.0 * dot(oc, r.direction());
+  const auto c = dot(oc, oc) - radius * radius;
+  return b * b - 4 * a * c > 0;
+}
+
+color ray_color(const ray& r) {
+  if (hit_sphere(point3(0, 0, -1), 0.5, r))
+    return color(1, 0, 0);
+
   vec3 unit_dir = unit_vector(r.direction());
   const auto t = 0.5 * (unit_dir.y() + 1.0);
   return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
@@ -37,7 +48,7 @@ int main() {
       const auto v = double(y) / (image_height - 1);
 
       ray r(origin, lower_left + u * horizontal + v * vertical - origin);
-      color c = background(r);
+      color c = ray_color(r);
       write_color(std::cout, c);
     }
   }
