@@ -50,20 +50,20 @@ int main() {
   world.add(std::make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, center));
   world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, left));
   world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, right));
-  camera cam;
+
+  camera cam(point3(-2, 2, 1), point3(0, 0, -1), vec3(0, 1, 0), 90.0, aspect_ratio);
 
   // Render
 
   std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-  for (int y = 0; y < image_height; ++y) {
-    std::cerr << "\rScanlines remining: " << (image_height - y) << ' ' << std::flush;
+  for (int y = image_height - 1; y >= 0; --y) {
+    std::cerr << "\rScanlines remaining: " << y << ' ' << std::flush;
     for (int x = 0; x < image_width; ++x) {
       color c(0, 0, 0);
       for (int i = 0; i < samples_per_pixel; ++i) {
-        const auto u = double(x + random_double()) / (image_width - 1);
-        const auto v = double(y + random_double()) / (image_height - 1);
-
+        const auto u = (x + random_double()) / (image_width - 1);
+        const auto v = (y + random_double()) / (image_height - 1);
         ray r = cam.get_ray(u, v);
         c += ray_color(r, world, max_depth);
       }
