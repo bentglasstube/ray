@@ -51,7 +51,7 @@ int main() {
   world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, left));
   world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, right));
 
-  camera cam(point3(-2, 2, 1), point3(0, 0, -1), vec3(0, 1, 0), 90.0, aspect_ratio);
+  camera cam(point3(-2, 2, 1), point3(0, 0, -1), vec3(0, 1, 0), 20.0, aspect_ratio);
 
   // Render
 
