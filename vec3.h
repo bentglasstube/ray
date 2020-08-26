@@ -129,3 +129,10 @@ vec3 random_in_hemisphere(const vec3& normal) {
 vec3 reflect(const vec3& v, const vec3& n) {
   return v - 2 * dot(v, n) * n;
 }
+
+vec3 refract(const vec3& uv, const vec3& n, double ratio) {
+  const double cos_theta = dot(-uv, n);
+  const vec3 perp = ratio * (uv + cos_theta * n);
+  const vec3 para = -std::sqrt(std::abs(1.0 - perp.length_squared())) * n;
+  return perp + para;
+}
