@@ -6,9 +6,12 @@
 #include <iostream>
 
 void write_color(std::ostream &out, color c, int samples) {
-  const double scale = 256.0 / samples;
+  const double scale = 1.0 / samples;
+  const double r = std::sqrt(scale * c.x());
+  const double g = std::sqrt(scale * c.y());
+  const double b = std::sqrt(scale * c.z());
 
-  out << static_cast<int>(clamp(scale * c.x(), 0, 255)) << ' '
-      << static_cast<int>(clamp(scale * c.y(), 0, 255)) << ' '
-      << static_cast<int>(clamp(scale * c.z(), 0, 255)) << '\n';
+  out << static_cast<int>(clamp(256 * r, 0, 255)) << ' '
+      << static_cast<int>(clamp(256 * g, 0, 255)) << ' '
+      << static_cast<int>(clamp(256 * b, 0, 255)) << '\n';
 }
