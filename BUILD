@@ -4,6 +4,7 @@ cc_binary(
     name = "main",
     srcs = ["main.cc"],
     deps = [
+        ":camera",
         ":color",
         ":hittable",
         ":ray",
@@ -46,4 +47,13 @@ cc_library(
 cc_library(
     name = "util",
     hdrs = ["util.h"],
+)
+
+cc_library(
+    name = "camera",
+    hdrs = ["camera.h"],
+    deps = [
+        ":ray",
+        ":util",
+    ],
 )
