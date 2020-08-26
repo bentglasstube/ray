@@ -51,7 +51,14 @@ int main() {
   world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, left));
   world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, right));
 
-  camera cam(point3(-2, 2, 1), point3(0, 0, -1), vec3(0, 1, 0), 20.0, aspect_ratio);
+  // Camera
+  const point3 lookfrom(3, 3, 2);
+  const point3 lookat(0, 0, -1);
+  const vec3 up(0, 1, 0);
+  const double dist_to_focus = (lookfrom - lookat).length();
+  const double aperture = 1.3;
+
+  camera cam(lookfrom, lookat, up, 20, aspect_ratio, aperture, dist_to_focus);
 
   // Render
 

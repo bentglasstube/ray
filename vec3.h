@@ -136,3 +136,10 @@ vec3 refract(const vec3& uv, const vec3& n, double ratio) {
   const vec3 para = -std::sqrt(std::abs(1.0 - perp.length_squared())) * n;
   return perp + para;
 }
+
+vec3 random_in_unit_disk() {
+  while (true) {
+    const auto p = vec3(random_double(-1, 1), random_double(-1, 1), 0);
+    if (p.length_squared() < 1) return p;
+  }
+}
