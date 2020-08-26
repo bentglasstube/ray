@@ -77,12 +77,12 @@ inline vec3 operator*(const vec3 &u, const vec3 &v) {
   return vec3(u.x() * v.x(), u.y() * v.y(), u.z() * v.z());
 }
 
-inline vec3 operator*(const vec3 &v, double t) {
+inline vec3 operator*(double t, const vec3 &v) {
   return vec3(v.x() * t, v.y() * t, v.z() * t);
 }
 
-inline vec3 operator*(double t, const vec3 &v) {
-  return v * t;
+inline vec3 operator*(const vec3 &v, double t) {
+  return t * v;
 }
 
 inline vec3 operator/(const vec3 &v, double t) {
@@ -124,4 +124,8 @@ vec3 random_in_hemisphere(const vec3& normal) {
   } else {
     return -in_unit_sphere;
   }
+}
+
+vec3 reflect(const vec3& v, const vec3& n) {
+  return v - 2 * dot(v, n) * n;
 }

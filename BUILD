@@ -35,6 +35,7 @@ cc_library(
     hdrs = [
         "hittable.h",
         "hittable_list.h",
+        "material.h",
     ],
 )
 
