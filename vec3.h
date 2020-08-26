@@ -109,3 +109,10 @@ vec3 random_in_unit_sphere() {
     if (p.length_squared() < 1) return p;
   }
 }
+
+vec3 random_unit_vector() {
+  const double a = random_double(0, 2 * pi);
+  const double z = random_double(-1, 1);
+  const double r = std::sqrt(1 - z * z);
+  return vec3(r * std::cos(a), r * std::sin(a), z);
+}
