@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 
 #include "camera.h"
 #include "color.h"
@@ -30,33 +31,60 @@ color ray_color(const ray& r, const hittable& world, int depth) {
   return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 
+hittable_list random_scene() {
+  hittable_list world;
+
+  auto ground = std::make_shared<lambertian>(color(0.5, 0.5, 0.5));
+  world.add(std::make_shared<sphere>(point3(0, -1000, 0), 1000, ground));
+
+  for (int a = -11; a < 11; ++a) {
+    for (int b = -11; b < 11; ++b) {
+      const point3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double());
+
+      if ((center - point3(4, 0.2, 0)).length() > 0.9) {
+        const double rmat = random_double();
+        std::shared_ptr<material> mat;
+
+        if (rmat < 0.8) {
+          const color albedo = color::random() * color::random();
+          mat = std::make_shared<lambertian>(albedo);
+        } else if (rmat < 0.95) {
+          const color albedo = color::random(0.5, 1);
+          const double fuzz = random_double(0, 0.5);
+          mat = std::make_shared<metal>(albedo, fuzz);
+        } else {
+          mat = std::make_shared<dielectric>(1.5);
+        }
+
+        world.add(std::make_shared<sphere>(center, 0.2, mat));
+      }
+    }
+  }
+
+  world.add(std::make_shared<sphere>(point3(0, 1, 0), 1.0, std::make_shared<dielectric>(1.5)));
+  world.add(std::make_shared<sphere>(point3(-4, 1, 0), 1.0, std::make_shared<lambertian>(color(0.4, 0.2, 0.1))));
+  world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, std::make_shared<metal>(color(0.7, 0.6, 0.5), 0.5)));
+
+  return world;
+}
+
 int main() {
   // Image properties
   const double aspect_ratio = 16.0 / 9.0;
-  const int image_width = 512;
+  const int image_width = 1280;
   const int image_height = static_cast<int>(image_width / aspect_ratio);
-  const int samples_per_pixel = 50;
+  const int samples_per_pixel = 500;
   const int max_depth = 50;
 
   // Scene
-  hittable_list world;
-
-  const auto ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
-  const auto center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
-  const auto left   = std::make_shared<dielectric>(1.5);
-  const auto right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 0.2);
-
-  world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, ground));
-  world.add(std::make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, center));
-  world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, left));
-  world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, right));
+  hittable_list world = random_scene();
 
   // Camera
-  const point3 lookfrom(3, 3, 2);
-  const point3 lookat(0, 0, -1);
+  const point3 lookfrom(13, 2, 3);
+  const point3 lookat(0, 0, 0);
   const vec3 up(0, 1, 0);
-  const double dist_to_focus = (lookfrom - lookat).length();
-  const double aperture = 1.3;
+  const double dist_to_focus = 10.0;
+  const double aperture = 0.1;
 
   camera cam(lookfrom, lookat, up, 20, aspect_ratio, aperture, dist_to_focus);
 
